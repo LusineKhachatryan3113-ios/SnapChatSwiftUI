@@ -18,6 +18,7 @@ enum PasswordStatus1 {
 
 // ViewModel
 import  Combine
+//This is changes from main to new branch
 
 class FormViewModel1: ObservableObject {
     @Published var name = ""
