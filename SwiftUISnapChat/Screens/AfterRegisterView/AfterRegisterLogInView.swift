@@ -7,7 +7,7 @@
 
 
 import SwiftUI
-//Changing an thing
+
 struct AfterRegisterLogInView: View {
     var body: some View {
 Text("This is LogIn After Register View")
