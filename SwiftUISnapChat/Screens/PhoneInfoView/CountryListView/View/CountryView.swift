@@ -25,8 +25,14 @@ struct CountryListView: View {
     var body: some View {
         List {
             Text("Country or Region")
-                .modifier(ParameterModifier(width: 200, backgroundColor: .white, foregroundColor: .black, height: 30, alignment: .center, size: 25))
-            SearchBar(countries: countries, searchText: $searchText)
+                .modifier(ParameterModifier(width: 200,
+                                            backgroundColor: .white, 
+                                            foregroundColor: .black, 
+                                            height: 30, 
+                                            alignment: .center, 
+                                            size: 25))
+            SearchBar(countries: countries, 
+                      searchText: $searchText)
             ForEach(filteredCountries) { country in
                 HStack {
                     Text("\(countryvewModel.getflag(country: country.code))")
