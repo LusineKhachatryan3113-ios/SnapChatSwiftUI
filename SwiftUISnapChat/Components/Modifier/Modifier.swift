@@ -5,9 +5,6 @@
 //  Created by Lusine on 3/24/22.
 //
 
-
-
-
 import SwiftUI
  struct ParameterModifier: ViewModifier {
   @State var width: CGFloat
@@ -18,7 +15,9 @@ import SwiftUI
     @State var size: CGFloat
   func body(content: Content) -> some View {
       content
-        .frame(width: width, height: height,alignment: alignment)
+        .frame(width: width, 
+               height: height,
+               alignment: alignment)
         .font(.system(size: size))
           .background(backgroundColor)
           .cornerRadius(30)
