@@ -50,8 +50,16 @@ class CountryViewModel: ObservableObject {
         return flag
     }
     
-   func onTapFetch(completion: @escaping ([Country]) -> ()) {
-     countryRepository.fetchCountry { (countries) in
-         completion(countries)
-     }
+func onTapfetch (completion: @escaping ([Country]) -> ()) {
+    URLSession.shared
+        .dataTaskPublisher(for: countryRepository.url!)
+        .receive(on: DispatchQueue.main)
+        .map(\.data)
+        .decode(type: [Country].self, decoder: JSONDecoder())
+        .sink { res in
+        } receiveValue: { countries in
+            completion(countries)
+        }
+        .store(in: &bag)  
+}
 }
