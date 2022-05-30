@@ -44,7 +44,7 @@ struct CountryListView: View {
             }
         }
         .onAppear {
-            countryvewModel.onTapFetch { (countries) in
+            countryvewModel.onTapfetch { (countries) in
                 self.countries = countries
             }
         }
