@@ -24,11 +24,10 @@ class CountryRepository: ObservableObject  {
             }
             .mapError { error in
                 if let error = error as? APIError {
-                    return error
-                } else {
                     self.errorMessage =  error.localizedDescription
-                    return error as! APIError
+                  
                 }
+                return error as! APIError
             }
             .eraseToAnyPublisher()
     }
