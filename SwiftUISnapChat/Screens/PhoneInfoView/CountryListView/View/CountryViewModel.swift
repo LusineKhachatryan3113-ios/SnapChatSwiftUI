@@ -13,6 +13,7 @@ class CountryViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published  var countries = [Country]()
     @Published var countryRepository: CountryRepository
+    private var bag = Set<AnyCancellable>()
     
     init(countryRepository: CountryRepository) {
         self.countryRepository = countryRepository
@@ -49,11 +50,19 @@ class CountryViewModel: ObservableObject {
         return flag
     }
     
-    func onTapFetch(completion: @escaping ([Country]) -> ()) {
-        countryRepository.fetchCountry { (countries) in
+   func onTapfetch (completion: @escaping ([Country]) -> ()) {
+    URLSession.shared
+        .dataTaskPublisher(for: countryRepository.url!)
+        .receive(on: DispatchQueue.main)
+        .map(\.data)
+        .decode(type: [Country].self, decoder: JSONDecoder())
+        .sink { res in
+        } receiveValue: { countries in
             completion(countries)
         }
-    }
+        .store(in: &bag) 
 }
+}
+
 
 
