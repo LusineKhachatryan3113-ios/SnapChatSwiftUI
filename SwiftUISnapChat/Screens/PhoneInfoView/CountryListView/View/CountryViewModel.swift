@@ -12,7 +12,7 @@ class CountryViewModel: ObservableObject {
     
     @Published var errorMessage: String? = nil
     @Published  var countries = [Country]()
-    @Published var countryRepository: CountryRepository
+    private var countryRepository: CountryRepository
     private var bag = Set<AnyCancellable>()
     
     init(countryRepository: CountryRepository) {
