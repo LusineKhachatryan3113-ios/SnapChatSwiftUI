@@ -9,8 +9,7 @@ import Foundation
 import Combine
 
 class ApiRepository {
-    
-    
+      
     func fetch<T: Decodable>(url: URL) -> AnyPublisher<T, APIError> {
         let request = URLRequest(url: url)
         
@@ -29,41 +28,8 @@ class ApiRepository {
                 }
             }
             .eraseToAnyPublisher()
-    }
-    
+    }   
 }
 
 
 
-
-
-
-
-
-/*
- 
- //
- //   func fetch<T: Decodable>(url: URL, completion: @escaping (Result<T, Error>) -> Void )  {
- //     URLSession.shared.dataTaskPublisher(for: url)
- //        .map { $0.data }
- //        .decode(type: T.self, decoder: JSONDecoder())
- //        .receive(on: DispatchQueue.main)
- //        .sink { (resultCompletion) in
- //                        switch resultCompletion {
- //                        case .failure(let error):
- //                            completion(.failure(error))
- //                        case .finished:
- //                           break
- //                        }
- //                    } receiveValue: { (resultArr) in
- //                        completion(.success(resultArr))
- //                    }
- //     .store(in: &subscriber)
- //
- //
- //   }
- //}
- 
- 
- 
- */
