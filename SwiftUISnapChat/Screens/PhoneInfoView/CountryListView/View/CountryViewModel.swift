@@ -27,15 +27,20 @@ class CountryViewModel: ObservableObject {
         return flag
     }
     
-func onTapfetch (completion: @escaping ([Country]) -> ()) {
-    countryRepository.fetch(url:countryRepository.url!)
-     .receive(on: DispatchQueue.main)
-     .decode(type: [Country].self, decoder: JSONDecoder())
-        .sink { res in
-        } receiveValue: { countries in
-            completion(countries)
+ func onTapFetch(completion: @escaping ([Country]) -> ()) {
+        countryRepository.fetch(url: countryRepository.url!)
+            .receive(on: DispatchQueue.main)
+                 .decode(type: [Country].self, decoder: JSONDecoder())
+                    .sink { res in
+                        switch res{
+                            case .failure(let error):
+                                print(error.localizedDescription)
+                            case .finished:
+                                break
+                        }
+                    } receiveValue: { countries in
+                        completion(countries)
+                    }
+                    .store(in: &bag)
+            }
         }
-        .store(in: &bag)
-
-}
-}
