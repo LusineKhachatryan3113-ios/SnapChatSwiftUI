@@ -5,18 +5,17 @@
 //  Created by Lusine on 5/5/22.
 //
 
+
 import Foundation
 import Combine
+import SwiftUI
 
-class CountryViewModel: ObservableObject {
-    
-    @Published var errorMessage: String? = nil
-    @Published  var countries = [Country]()
-    private var countryRepository: CountryRepository
-    private var bag = Set<AnyCancellable>()
-    
-    init(countryRepository: CountryRepository) {
-        self.countryRepository = countryRepository
+class CountryListViewModel: ObservableObject, CountryService {
+    var apiSession: APIService
+    @Published var countries = [Country]()
+    var cancellables = Set<AnyCancellable>()
+    init(apiSession: APIService = APISession()) {
+        self.apiSession = apiSession
     }
     func getflag(country:String) -> String {
         let base : UInt32 = 127397
@@ -26,16 +25,19 @@ class CountryViewModel: ObservableObject {
         }
         return flag
     }
-    
-func onTapfetch (completion: @escaping ([Country]) -> ()) {
-    countryRepository.fetch(url:countryRepository.url!)
-     .receive(on: DispatchQueue.main)
-     .decode(type: [Country].self, decoder: JSONDecoder())
-        .sink { res in
-        } receiveValue: { countries in
-            completion(countries)
-        }
-        .store(in: &bag)
-
-}
+    func getCountryList() {
+        let cancellable = self.getCountryList()
+            .sink(receiveCompletion: { result in
+                switch result {
+                    case .failure(let error):
+                        print("Handle error: \(error)")
+                    case .finished:
+                        break
+                }
+                
+            }) { (countries) in
+                self.countries = countries
+            }
+        cancellables.insert(cancellable)
+    }
 }
