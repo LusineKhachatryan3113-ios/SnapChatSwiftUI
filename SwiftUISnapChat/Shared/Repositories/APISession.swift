@@ -1,0 +1,36 @@
+//
+//  APISession.swift
+//  SwiftUISnapChat
+//
+//  Created by Lusine on 6/6/22.
+//
+
+import Combine
+import SwiftUI
+
+struct APISession: APIService {
+    func request<T>(with builder: RequestBuilder, type: T.Type) -> AnyPublisher<T, APIError> where T: Decodable {
+        let decoder = JSONDecoder()
+        return URLSession.shared
+            .dataTaskPublisher(for: builder.urlRequest)
+            .receive(on: DispatchQueue.main)
+            .mapError { _ in .unknown }
+            .flatMap { data, response -> AnyPublisher<T, APIError> in
+                if let response = response as? HTTPURLResponse {
+                    if (200...299).contains(response.statusCode) {
+                    return Just(data)
+                        .decode(type: T.self, decoder: decoder)
+                        .mapError {error in .decodingError}
+                        .eraseToAnyPublisher()
+                    } else {
+                        return Fail(error: APIError.httpError(response.statusCode))
+                            .eraseToAnyPublisher()
+                    }
+                }
+               return Fail(error: APIError.unknown)
+                        .eraseToAnyPublisher()
+           }
+           .eraseToAnyPublisher()
+   }
+}
+
