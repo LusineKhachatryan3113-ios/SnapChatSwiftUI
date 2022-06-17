@@ -7,8 +7,14 @@
 
 import SwiftUI
 
-struct LogInView: View {
-    @StateObject  private var  logInViewModel = LogInViewModel()
+struct LogInView: View {   
+  struct LogInView: View {
+    
+    @EnvironmentObject var authentication: Authentication
+    @StateObject private var logInViewModel = LoginViewModel()
+    @State var alertisPresented: Bool = false
+    @State var isfocusAble: [Bool] = [true, false]
+    @State var isRevealed: Bool  = false
     let screen = UIScreen.main.bounds.width
     var body: some View {
         VStack {
@@ -19,84 +25,74 @@ struct LogInView: View {
             TextFieldView(keyboardType: .emailAddress,
                           returnVal: .next,
                           tag: 0,
-                          text: $logInViewModel.formViewModel.email,
-                          isfocusAble: $logInViewModel.isfocusAble)
+                          text: $logInViewModel.credentials.email,
+                          isfocusAble: $isfocusAble, isRevealed: $isRevealed)
                 .frame(width: UIScreen.main.bounds.width / 2, height: 10)
                 .ignoresSafeArea(.keyboard)
                 .autocapitalization(.none)
-            Rectangle().frame(width:UIScreen.main.bounds.width / 2 + 40,
-                              height: 0.5)
+            // .padding()
+            Rectangle()
+                .frame(width:UIScreen.main.bounds.width / 2 + 40,
+                       height: 0.5)
             
             NavigationLink(destination: PhoneInfoView()) {
                 PhoneNumberComponent()
             }
-            Text(LocalizedStringKey.init("password"))
-                .modifier(ParameterModifier(width: 200,
-                                            backgroundColor: .white,
-                                            foregroundColor: .blue,
-                                            height: 20,
-                                            alignment: .leading,
-                                            size: 10))
+            PasswordComponent()
             VStack {
-                VStack (alignment:.leading) {
+                VStack(alignment:.leading) {
                     HStack {
-                        PasswordTextView(keyboardType: .numbersAndPunctuation,
-                                         returnVal: .done,
-                                         tag: 1,
-                                         isRevealed: $logInViewModel.isRevealed,
-                                         text: $logInViewModel.formViewModel.password,
-                                         isfocusAble: $logInViewModel.isfocusAble)
+                        TextFieldView(keyboardType: .emailAddress,
+                                      returnVal: .next,
+                                      tag: 1,
+                                      text: $logInViewModel.credentials.password,
+                                      isfocusAble: $isfocusAble, isRevealed: $isRevealed)
                             .frame(width: UIScreen.main.bounds.width / 2,
                                    height: 10)
-                        Button(action: {
-                            logInViewModel.isRevealed.toggle()
-                            
-                        }) {
-                            Image(systemName: self.logInViewModel.isRevealed ? "eye.slash.fill" : "eye.fill")
-                                .foregroundColor(Color.gray)
-                        }
+                        
+                        ButtonActionIsReveled(onTap: {
+                            isRevealed.toggle()
+                        }, isRevealed: isRevealed)
+                        
                     }
-                    Rectangle().frame(width: UIScreen.main.bounds.width / 2 + 40, height: 0.5)
-                    Text(logInViewModel.formViewModel.inlineErrorForPassword)
-                        .foregroundColor(.red)
-                        .font(.system(size:10))
-                        .background(Color.white)
                 }
-                VStack {
-                    Button(action: {
-                        logInViewModel.alertisPresented = true
-                    }, label: {
-                        ForgotComponent()
-                    })
-                    .frame(width: UIScreen.main.bounds.width / 2 - 20, height: 30, alignment: .center)
-                    .alert(isPresented: $logInViewModel.alertisPresented, content: {
-                        Alert(title: Text(LocalizedStringKey.init("howpass?")),
-                              primaryButton:
-                                .default(Text(LocalizedStringKey.init("bymail"))),
-                              secondaryButton:
-                                .cancel(Text(LocalizedStringKey.init("byPhone"))))
-                    })
-                    Spacer()
-                    
-            NavigationLink(destination: AfterRegisterLogInView()) {
-                    RoundedRectangle(cornerRadius: 30)
-                        .frame(width: 180, height: 40)
-                        .overlay(
-                            Text(LocalizedStringKey.init("logIn"))
-                                .foregroundColor(.white)
-                            )
-                    }
-                .padding()
-            .disabled(!logInViewModel.formViewModel.isValid)
-        
+                Rectangle()
+                    .frame(width: UIScreen.main.bounds.width / 2 + 40, height: 0.5)
+            }
+            VStack(alignment: .center) {
+                ActionButtonView(alertisPresented: false)
+            }
+            if logInViewModel.showProgressView {
+                ProgressView()
+            }
+            Button(action: {
+                logInViewModel.login { success in
+                    authentication.updateValidation(success: success)
+                }
+            }, label: {
+                RoundedRectangle(cornerRadius: 30)
+                    .frame(width: 180, height: 40)
+                    .overlay(
+                        Text(LocalizedStringKey.init("logIn"))
+                            .foregroundColor(.white)
+                    )
+            })
+            .disabled(logInViewModel.loginDisabled)
+            .padding(.bottom, 20)
+            .onTapGesture {
+                UIApplication.shared.endEditing()
+            }
+            Spacer()
         }
-    }
-          
+        .autocapitalization(.none)
+        .textFieldStyle(RoundedBorderTextFieldStyle())
+        .padding()
+        .disabled(logInViewModel.showProgressView)
+        .alert(item: $logInViewModel.error) { error in
+            Alert(title: Text("Invalid Login"), message: Text(error.localizedDescription))
         }
     }
 }
-
-
 
 
 
