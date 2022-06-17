@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,7 +31,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
-
-
+}
+struct CountryListApp: App {
+    @StateObject var authentication = Authentication()
+    var body: some Scene {
+        WindowGroup {
+            if authentication.isValidated {
+               AfterRegisterLogInView()
+                .environmentObject(authentication)
+            } else {
+             InitialView()
+                .environmentObject(authentication)
+            }
+        }
+    }
 }
 
