@@ -61,36 +61,29 @@ struct LogInView: View {
             VStack(alignment: .center) {
                 ActionButtonView(alertisPresented: false)
             }
-            if logInViewModel.showProgressView {
-                ProgressView()
+              if logInViewModel.showProgressView {
+            ProgressView()
             }
-            Button(action: {
-                logInViewModel.login { success in
+                LoginButtonView(onTap: {
+                    logInViewModel.login { success in
                     authentication.updateValidation(success: success)
-                }
-            }, label: {
-                RoundedRectangle(cornerRadius: 30)
-                    .frame(width: 180, height: 40)
-                    .overlay(
-                        Text(LocalizedStringKey.init("logIn"))
-                            .foregroundColor(.white)
-                    )
-            })
-            .disabled(logInViewModel.loginDisabled)
-            .padding(.bottom, 20)
-            .onTapGesture {
+                     }
+                }, authentication: Authentication())
+              
+              .onTapGesture {
                 UIApplication.shared.endEditing()
             }
+            .disabled(logInViewModel.loginDisabled)
             Spacer()
+              
         }
-        .autocapitalization(.none)
-        .textFieldStyle(RoundedBorderTextFieldStyle())
-        .padding()
         .disabled(logInViewModel.showProgressView)
         .alert(item: $logInViewModel.error) { error in
             Alert(title: Text("Invalid Login"), message: Text(error.localizedDescription))
+        
         }
     }
+}
 }
 
 
