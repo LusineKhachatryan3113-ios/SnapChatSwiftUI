@@ -7,7 +7,12 @@
 
 import Foundation
 
-class APIServiceUser {
+protocol RealUserService {
+    
+    func login(credentials: Credentials, completion: @escaping (Result<Bool, Authentication.AuthenticationError>) -> Void)
+}
+
+class APIServiceUser: RealUserService {
     
     static let shared = APIServiceUser()
     
