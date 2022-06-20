@@ -10,6 +10,7 @@ import SwiftUI
 struct LogInView: View {
     
     @EnvironmentObject var authentication: Authentication
+    @StateObject private var logInViewModel = LoginViewModel(userService: APIServiceUser())
     @StateObject private var logInViewModel = LoginViewModel()
     @State var alertisPresented: Bool = false
     @State var isfocusAble: [Bool] = [true, false]
