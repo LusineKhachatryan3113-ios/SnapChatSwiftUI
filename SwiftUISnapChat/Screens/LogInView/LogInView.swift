@@ -72,10 +72,8 @@ struct LogInView: View {
               
               .onTapGesture {
                 UIApplication.shared.endEditing()
-            }
-            .disabled(logInViewModel.loginDisabled)
-            Spacer()
-              
+              }
+            Spacer()       
         }
         .disabled(logInViewModel.showProgressView)
         .alert(item: $logInViewModel.error) { error in
