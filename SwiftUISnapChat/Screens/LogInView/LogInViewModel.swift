@@ -6,26 +6,30 @@
 //
 
 import Foundation
+import SwiftUI
 
 class LoginViewModel: ObservableObject {
-    @Published var credentials = Credentials()
+    private let userService: UserService
+    var credentials = Credentials()
     @Published var showProgressView = false
     @Published var error: Authentication.AuthenticationError?
+    
+    init(userService: UserService) {
+        self.userService = userService
+    }
     func login(completion: @escaping (Bool) -> Void) {
-        showProgressView = true
-        APIServiceUser.shared.login(credentials: credentials) {[unowned self] (result: Result<Bool, Authentication.AuthenticationError>) in
-           showProgressView = false
+        userService.login(credentials: credentials) { (result) in
             switch result {
                 case .success:
                     completion(true)
                 case .failure(let authError):
-                    credentials = Credentials()
-                    error = authError
+                    self.error = authError
                     completion(false)
             }
         }
     }
 }
+    
 
    
 
