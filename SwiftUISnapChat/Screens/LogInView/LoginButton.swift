@@ -12,6 +12,10 @@ struct LoginButtonView: View {
     @State var showProgressView = false
     @State var onTap: (() -> Void)?
     @StateObject  var authentication =  Authentication()
+    
+     var loginDisabled: Bool {
+        credentials.email.isEmpty || credentials.password.isEmpty
+    }
     var body: some View {
         VStack{
             RoundedRectangle(cornerRadius: 30)
@@ -20,7 +24,7 @@ struct LoginButtonView: View {
                     Text(LocalizedStringKey.init("logIn"))
                         .foregroundColor(.white)
                 )
-            
+                .disabled(loginDisabled)
                 .autocapitalization(.none)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
         } .onTapGesture {
